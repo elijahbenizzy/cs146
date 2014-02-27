@@ -11,7 +11,7 @@ public class Main {
 		System.out.println("le : " + translator.getMostLikelyWord("le"));
 		System.out.println("pain : " + translator.getMostLikelyWord("pain"));
 		System.out.println("il : " + translator.getMostLikelyWord("il"));
-		System.out.println("elle: " + traanslator.getMostLikelyWord("elle"));
+		System.out.println("elle: " + translator.getMostLikelyWord("elle"));
 
 
 	}
