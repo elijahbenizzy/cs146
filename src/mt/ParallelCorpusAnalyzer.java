@@ -31,23 +31,13 @@ public class ParallelCorpusAnalyzer {
 	public void setTau(String s1, String s2, double value) {
 		_taus.put(s1,s2,value);
 	}
-//	private static void initializeWordPairMap(HashMap<WordPair,Double> map, Set<String> set1, Set<String> set2,double value) {
-//		for(String token1: set1) {
-//			for(String token2: set2) {
-//				WordPair toAdd = new WordPair(token1,token2);
-//				map.put(toAdd, value);
-//			}
-//		}
-//	}
-//	private void initialIteration() { //performs an initial iteration of the EM algorithm, setting all the taus to a first, equal value
-//		ParallelCorpusAnalyzer.initializeWordPairMap(_taus,_corpus.getLang1Tokens(),_corpus.getLang2Tokens(),_initialTauValue);
-//	}
 	private TupleMap<String,Double> EStep(int iternum) { //returns partial count map
 		TupleMap<String,Double> n_e_f = new MapOfMaps<String,Double>(0.0);
-//		ParallelCorpusAnalyzer.initializeWordPairMap(n_e_f,_corpus.getLang1Tokens(),_corpus.getLang2Tokens(),0); //initializes all n_e_f's (or whatever order it actually is) to 0
-		long prevTime = System.currentTimeMillis();
-		int pairsProcessed = 0;
-		System.out.println(_corpus.getLineArrayLang1().size());
+		
+//		long prevTime = System.currentTimeMillis();
+//		int pairsProcessed = 0;
+//		System.out.println(_corpus.getLineArrayLang1().size());
+		
 		for(int pos = 0; pos< _corpus.getLineArrayLang1().size();pos++) {
 			String[] sentence1 = _corpus.getLineArrayLang1().elementAt(pos);
 			String[] sentence2 = _corpus.getLineArrayLang2().elementAt(pos);
@@ -55,10 +45,8 @@ public class ParallelCorpusAnalyzer {
 				double p_k = 0;
 				
 				for(int k = 0; k <sentence2.length;k++) { //getting p_k
-					pairsProcessed++;
+//					pairsProcessed++;
 					double tauValue = this.getTau(sentence1[j],sentence2[k]);
-//					System.out.println(tauValue);
-//					double tauValue = _taus.get(new WordPair(sentence1[j],sentence2[k]));
 					p_k+=tauValue; // Set pk =Plj=0 τej,fk, where j are the positions of the English words in the same sentence pair as fk
 				}
 				for(int k = 0; k < sentence2.length;k++) {  //incrementing n_k
@@ -68,20 +56,18 @@ public class ParallelCorpusAnalyzer {
 					n_e_f.put(word1,word2,n_e_f.get(word1,word2)+tauValue/p_k);
 				}
 			}
-			if(pos %100 == 0) {
-				long t2 = System.currentTimeMillis();
-				double timeTaken = (t2-prevTime);
-				System.out.println("================");
-				System.out.println("position #" + pos + " took " + timeTaken + " milliseconds to process " + pairsProcessed + "pairs");
-//				System.out.println("size of n_e_f is " + n_e_f.size());
-				System.out.println("total memory is:" + Runtime.getRuntime().totalMemory());
-				System.out.println("total free memory is" + Runtime.getRuntime().freeMemory());
-				System.out.println("total possible size is:" + _corpus.getLang1Tokens().size()*_corpus.getLang2Tokens().size());
-				System.out.println("Iteration number is: " + iternum);
-				System.out.println("================");
-				pairsProcessed = 0;
-				prevTime = t2;
-			}
+//			if(pos %100 == 0) {
+//				long t2 = System.currentTimeMillis();
+//				double timeTaken = (t2-prevTime);
+//				System.out.println("================");
+//				System.out.println("position #" + pos + " took " + timeTaken + " milliseconds to process " + pairsProcessed + "pairs");
+//				System.out.println("total used memory is:" + (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000 + "m");
+//				System.out.println("total possible size is:" + _corpus.getLang1Tokens().size()*_corpus.getLang2Tokens().size());
+//				System.out.println("Iteration number is: " + iternum);
+//				System.out.println("================");
+//				pairsProcessed = 0;
+//				prevTime = t2;
+//			}
 		}
 		return n_e_f;
 	}
@@ -124,6 +110,7 @@ public class ParallelCorpusAnalyzer {
 		this.MStep(estepValue);
 		System.out.println("completed M step");
 		this.filterTaus();
+		System.gc();
 		
 	}
 
@@ -152,9 +139,9 @@ public class ParallelCorpusAnalyzer {
 //		for(WordPair w: _taus.keySet()) {
 //			System.out.println(w + " <-----> " + _taus.get(w.token1,w.token2));
 //		}
-		for(Entry<String,String> e: _mostLikelyTranslations.entrySet()) {
-			System.out.println(e.getKey() + " <-----> " + e.getValue());
-		}
+//		for(Entry<String,String> e: _mostLikelyTranslations.entrySet()) {
+//			System.out.println(e.getKey() + " <-----> " + e.getValue());
+//		}
 	}
 	public String getMostLikelyWord(String s) {
 		return _mostLikelyTranslations.get(s);
