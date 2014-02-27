@@ -9,14 +9,14 @@ import util.DefaultDict;
 
 public class ParallelCorpusAnalyzer {
 	private ParallelCorpus _corpus;
-	private StringTupleMap _taus;
+	private TupleMap<String,Double> _taus;
 	private double _initialTauValue;
 	public static final int NUM_STEPS = 10;
 	private HashMap<String,String> _mostLikelyTranslations; //map of the argmaxes, from french to english
 	public ParallelCorpusAnalyzer(ParallelCorpus corpus) {
 		_corpus = corpus;
 		_initialTauValue = this.getInitialTauValue();
-		_taus = new WordPairMap(_initialTauValue);
+		_taus = new PairMap<String,Double>(_initialTauValue);
 		_mostLikelyTranslations = new HashMap<String,String>();
 	}
 	
@@ -42,8 +42,8 @@ public class ParallelCorpusAnalyzer {
 //	private void initialIteration() { //performs an initial iteration of the EM algorithm, setting all the taus to a first, equal value
 //		ParallelCorpusAnalyzer.initializeWordPairMap(_taus,_corpus.getLang1Tokens(),_corpus.getLang2Tokens(),_initialTauValue);
 //	}
-	private StringTupleMap EStep(int iternum) { //returns partial count map
-		StringTupleMap n_e_f = new WordPairMap(0.0);
+	private TupleMap<String,Double> EStep(int iternum) { //returns partial count map
+		TupleMap<String,Double> n_e_f = new PairMap<String,Double>(0.0);
 //		ParallelCorpusAnalyzer.initializeWordPairMap(n_e_f,_corpus.getLang1Tokens(),_corpus.getLang2Tokens(),0); //initializes all n_e_f's (or whatever order it actually is) to 0
 		long prevTime = System.currentTimeMillis();
 		int pairsProcessed = 0;
@@ -89,10 +89,10 @@ public class ParallelCorpusAnalyzer {
 	private void filterTaus() {
 		
 	}
-	private void MStep(StringTupleMap n_e_f) {
+	private void MStep(TupleMap<String,Double> n_e_f) {
 		DefaultDict<String,Double> n_e_0 = new DefaultDict<String,Double>(0.0);
 		
-		for(WordPair pair: n_e_f.keySet()) {
+		for(Tuple<String> pair: n_e_f.keySet()) {
 				String word1 = pair.token1;
 				String word2 = pair.token2;
 				n_e_0.put(word1, n_e_0.get(word1) + this.getTau(word1,word2));
@@ -104,7 +104,7 @@ public class ParallelCorpusAnalyzer {
 //				n_e_0.put(s1, n_e_0.get(s1) + this.getTau(s1,s2));
 //			}
 //		}
-		for(WordPair pair: n_e_f.keySet()) {
+		for(Tuple<String> pair: n_e_f.keySet()) {
 			String word1 = pair.token1;
 			String word2 = pair.token2;
 			double tauValue = n_e_f.get(word1,word2)/n_e_0.get(word1);
@@ -119,7 +119,7 @@ public class ParallelCorpusAnalyzer {
 	}
 	private void EMIteration(int iternum) {
 		System.out.println("doing EM iteration number" + iternum);
-		StringTupleMap estepValue = this.EStep(iternum);
+		TupleMap<String,Double> estepValue = this.EStep(iternum);
 		System.out.println("completed e-step");
 		this.MStep(estepValue);
 		System.out.println("completed M step");
@@ -136,7 +136,7 @@ public class ParallelCorpusAnalyzer {
 	
 	private void findTranslations() {
 		DefaultDict<String,Double> _maximumTau = new DefaultDict<String,Double>(0.0);
-		for(WordPair pair: _taus.keySet()) {
+		for(Tuple<String> pair: _taus.keySet()) {
 			String word1 = pair.token1;
 			String word2 = pair.token2;
 				if(_maximumTau.get(word2) < _taus.get(word1,word2)) {

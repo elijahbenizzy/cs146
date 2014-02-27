@@ -8,38 +8,38 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class WordPairMap implements StringTupleMap { 
-	protected double _defaultValue;
-	private Map<WordPair,Double> _map;
+public class PairMap<K,V> implements TupleMap<K,V> { 
+	protected V _defaultValue;
+	private Map<Tuple<K>,V> _map;
 	
-	public WordPairMap(double defaultValue){
+	public PairMap(V defaultValue){
 		super();
 		_defaultValue = defaultValue;
-		_map = new HashMap<WordPair,Double>();
+		_map = new HashMap<Tuple<K>,V>();
 	}
 
-	public Double get(String word1, String word2) {
-		WordPair toGet = new WordPair(word1,word2);
-		Double out = _map.get(toGet);
+	public V get(K elem1, K elem2) {
+		Tuple<K> toGet = new Tuple<K>(elem1,elem2);
+		V out = _map.get(toGet);
 		if(out == null)
 			return _defaultValue;
 		return out;
 	} 
 
-	public boolean containsKey(String word1, String word2) {
-		WordPair key = new WordPair(word1,word2);
+	public boolean containsKey(K elem1, K elem2) {
+		Tuple<K> key = new Tuple<K>(elem1,elem2);
 		return _map.containsKey(key);
 
 	}
 
-	public Double put(String word1, String word2, Double value) {
-		WordPair key = new WordPair(word1,word2);
+	public V put(K elem1, K elem2, V value) {
+		Tuple<K> key = new Tuple<K>(elem1,elem2);
 		_map.put(key, value);
 		return value;
 	}
 
 	@Override
-	public Set<WordPair> keySet() {
+	public Set<Tuple<K>> keySet() {
 		return _map.keySet();
 	}
 	
