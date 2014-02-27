@@ -36,12 +36,12 @@ public class MapOfMaps<K,V> implements TupleMap<K,V>{
 			}
 		}
 
-		public boolean containsKey(String word1, String word2) {
-			if(!_map.containsKey(word1)) {
+		public boolean containsKey(K elem1, K elem2) {
+			if(!_map.containsKey(elem1)) {
 				return false;
 			} else {
-				HashMap<String, Double> specific = _map.get(word1);
-				if(specific.containsKey(word2)) {
+				HashMap<K, V> specific = _map.get(elem1);
+				if(specific.containsKey(elem2)) {
 					return true;
 				} else {
 					return false;
@@ -50,27 +50,27 @@ public class MapOfMaps<K,V> implements TupleMap<K,V>{
 			
 		}
 
-		public Double put(String word1, String word2, Double value) {
-			if(!this.containsKey(word1,word2)) {
+		public V put(K elem1, K elem2, V value) {
+			if(!this.containsKey(elem1,elem2)) {
 				_size++;
 			}
-			if(!_map.containsKey(word1)) {
-				_map.put(word1, new HashMap<String,Double>());
+			if(!_map.containsKey(elem1)) {
+				_map.put(elem1, new HashMap<K,V>());
 				
 			}
-			HashMap<String, Double> specific = _map.get(word1);
-			specific.put(word2, value);
+			HashMap<K, V> specific = _map.get(elem1);
+			specific.put(elem2, value);
 			return value;
 		}
 		public int size() {
 			return _size;
 		}
 		
-		public Set<Tuple> keySet() {
-			HashSet<Tuple> out = new HashSet<Tuple>();
-			for(Entry<String,HashMap<String,Double>> entry1: _map.entrySet()) {
-				for(Entry<String,Double> entry2: entry1.getValue().entrySet()) {
-					out.add(new Tuple(entry1.getKey(),entry2.getKey()));
+		public Set<Tuple<K>> keySet() {
+			HashSet<Tuple<K>> out = new HashSet<Tuple<K>>();
+			for(Entry<K,HashMap<K,V>> entry1: _map.entrySet()) {
+				for(Entry<K,V> entry2: entry1.getValue().entrySet()) {
+					out.add(new Tuple<K>(entry1.getKey(),entry2.getKey()));
 				}
 			}
 			return out;

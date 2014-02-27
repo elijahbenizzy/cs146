@@ -16,7 +16,7 @@ public class ParallelCorpusAnalyzer {
 	public ParallelCorpusAnalyzer(ParallelCorpus corpus) {
 		_corpus = corpus;
 		_initialTauValue = this.getInitialTauValue();
-		_taus = new PairMap<String,Double>(_initialTauValue);
+		_taus = new MapOfMaps<String,Double>(_initialTauValue);
 		_mostLikelyTranslations = new HashMap<String,String>();
 	}
 	
@@ -43,7 +43,7 @@ public class ParallelCorpusAnalyzer {
 //		ParallelCorpusAnalyzer.initializeWordPairMap(_taus,_corpus.getLang1Tokens(),_corpus.getLang2Tokens(),_initialTauValue);
 //	}
 	private TupleMap<String,Double> EStep(int iternum) { //returns partial count map
-		TupleMap<String,Double> n_e_f = new PairMap<String,Double>(0.0);
+		TupleMap<String,Double> n_e_f = new MapOfMaps<String,Double>(0.0);
 //		ParallelCorpusAnalyzer.initializeWordPairMap(n_e_f,_corpus.getLang1Tokens(),_corpus.getLang2Tokens(),0); //initializes all n_e_f's (or whatever order it actually is) to 0
 		long prevTime = System.currentTimeMillis();
 		int pairsProcessed = 0;

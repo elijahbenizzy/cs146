@@ -1,9 +1,3 @@
-/README.txt
-/bigram
-/counts
-/counts.sh
-/langmod
-/langmod.sh
 /mt
-/unigram
+/langmod
 /util

@@ -1,6 +1,7 @@
 package mt;
 
 import util.Bigram;
+
 import java.util.Arrays;
 
 public class Tuple<T> {
