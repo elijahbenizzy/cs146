@@ -15,9 +15,13 @@ public class BigramAnalyzer extends Analyzer {
 	private BigramCorpus _trainingData;
 	private BigramCorpus _devData;
 	private UnigramAnalyzer _unigramModel;
-	
 	private double _beta;
-
+	
+	public BigramAnalyzer(String trainingFile,double alpha, double beta) throws IOException {
+		super(trainingFile,null);
+		_unigramModel = new UnigramAnalyzer(trainingFile,alpha);	
+		_trainingData = new BigramCorpus(trainingFile);
+	}
 	public BigramAnalyzer(UnigramAnalyzer unigramModel) throws IOException {
 		super(unigramModel.getTrainingFile(),unigramModel.getDevDataFile());
 		this.initialize(_trainingDataPath, _devDataPath, unigramModel);
@@ -37,7 +41,17 @@ public class BigramAnalyzer extends Analyzer {
 		_devData = new BigramCorpus(devDataPath);
 		_unigramModel = unigramModel;
 	}
+	
+	public double getTheta(String word1,String word2) {
+		Bigram bigram = new Bigram(word1,word2);
+		double beta = _beta;
+		BigramCorpus c = _trainingData;
+		return this.getTheta(bigram,beta,c);
+	}
 	private double getTheta(Bigram b, double beta, BigramCorpus c) {
+//		System.out.println(" c " + c);
+//		System.out.println("b " + b);
+//		System.out.println();
 		int n_w_wprime = c.getBigramFrequency(b);
 		int n_w_o = c.firstTokenFrequency(b.token1);
 		double theta_wprime = _unigramModel.getTheta(b.token2, _unigramModel.getAlpha(), c);
@@ -46,7 +60,6 @@ public class BigramAnalyzer extends Analyzer {
 	
 	private double getTheta(String w, String wprime, double beta, BigramCorpus c) {
 		return this.getTheta(new Bigram(w,wprime), beta, c);
-		
 		
 	}
 	public double bestBeta() {

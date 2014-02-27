@@ -21,13 +21,15 @@ public class UnigramAnalyzer extends Analyzer {
 		this.initialize(trainingDataPath, devDataPath);
 		_alpha = this.bestAlpha();
 	}
+	public UnigramAnalyzer(String trainingDataPath, double alpha) { //no held out data
+		super(trainingDataPath,null);
+	}
 	
 	public UnigramAnalyzer(String trainingDataPath, String devDataPath, double alpha) throws IOException {
 		super(trainingDataPath,devDataPath);
 		this.initialize(trainingDataPath, devDataPath);
 		_alpha = alpha;
 	}
-	
 	private void initialize(String trainingDataPath, String devDataPath) throws IOException {
 		_trainingData = new Corpus(trainingDataPath);
 		_devData = new Corpus(devDataPath);

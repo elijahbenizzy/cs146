@@ -18,11 +18,16 @@ public class ParallelCorpus {
 	private Vector<String[]> _lineArray2;
 	private Set<String> _lang1Tokens;
 	private Set<String> _lang2Tokens;// translating from lang2 to lang1
+	private String _lang1Data;
+	private String _lang2Data;
 	public ParallelCorpus(String lang2, String filePath2, String lang1, String filePath1) throws IOException, InvalidCorpusException {
 		_lang1 = lang1;
 		_lang2 = lang2;
+		_lang1Data = filePath1;
+		_lang2Data = filePath2;
 		WordCounter lang1Counter = new WordCounter();
 		WordCounter lang2Counter = new WordCounter();
+		
 		FileProcessor.processByLine(filePath1, new BasicLineProcessor(_lineArray1 = new Vector<String[]>(),false),lang1Counter); 
 		FileProcessor.processByLine(filePath2, new BasicLineProcessor(_lineArray2 = new Vector<String[]>(),true),lang2Counter); //counts the null word
 		if(_lineArray1.size() != _lineArray2.size()) {
@@ -30,6 +35,23 @@ public class ParallelCorpus {
 		}
 		(_lang1Tokens = new HashSet<String>(lang1Counter.getAllTokens())).add(Constants.NO_TRANSLATION);
 		_lang2Tokens = new HashSet<String>(lang2Counter.getAllTokens());
+	}
+	
+	public String getLang1data() {
+		return _lang1Data;
+	}
+	public String getLang2Data() {
+		return _lang2Data;
+	}
+	
+	public ParallelCorpus reverse() {
+		String lang1 = _lang1;
+		_lang1 = _lang2;
+		_lang2 = lang1;
+		Vector<String[]> lineArray1 = _lineArray1;
+		_lineArray1 = _lineArray2;
+		_lineArray2 = lineArray1;
+		return this;
 	}
 	
 	public Set<String> getLang1Tokens() {

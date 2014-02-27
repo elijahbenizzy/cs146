@@ -75,5 +75,33 @@ public class MapOfMaps<K,V> implements TupleMap<K,V>{
 			}
 			return out;
 		}
+
+
+		@Override
+		public Iterable<K> getSecondElements(K elem1) {
+			// TODO Auto-generated method stub
+			if(!_map.containsKey(elem1)) {
+				return new HashSet<K>();
+			} else {
+				return _map.get(elem1).keySet();
+			}
+		}
+		
+
+
+		@Override
+		public void reverse() {
+			Map<K,HashMap<K,V>> oldMap = _map;
+			_map = new HashMap<K,HashMap<K,V>>(30000,.5f);
+			
+			for(K key1: oldMap.keySet()) {
+				for(K key2: oldMap.get(key1).keySet()) {
+					V value = oldMap.get(key1).get(key2);
+					this.put(key2, key1, value);
+				}
+			}
+			
+			
+		}
 		
 	}

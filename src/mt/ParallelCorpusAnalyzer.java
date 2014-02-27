@@ -5,23 +5,37 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import langmod.BigramAnalyzer;
+import util.Constants;
 import util.DefaultDict;
 
 public class ParallelCorpusAnalyzer {
 	private ParallelCorpus _corpus;
-	private TupleMap<String,Double> _taus;
+	protected TupleMap<String,Double> _taus;
 	private double _initialTauValue;
-	public static final int NUM_STEPS = 10;
+	public static final int NUM_STEPS = 13;
+	private double _previousLikelihood;
+	private double _currentLikelihood;
+	private TupleMap<String,String> _cachedTranslations; //stores the cached translations given a preveious englishword and a french word
+	private BigramAnalyzer _bigramModel;
+	
 	private HashMap<String,String> _mostLikelyTranslations; //map of the argmaxes, from french to english
 	public ParallelCorpusAnalyzer(ParallelCorpus corpus) {
+		_previousLikelihood = 0;
+		_currentLikelihood = 0;
 		_corpus = corpus;
 		_initialTauValue = this.getInitialTauValue();
 		_taus = new MapOfMaps<String,Double>(_initialTauValue);
 		_mostLikelyTranslations = new HashMap<String,String>();
 	}
 	
+	private boolean converged() {
+		return (_previousLikelihood != 0) && Math.abs(_currentLikelihood-_previousLikelihood) < Math.log(Constants.CONVERGANCE_THRESHOLD);
+	}
+	
 	private double getInitialTauValue() {
-		return 1.0/_corpus.getLang1Tokens().size();
+		System.out.println(1.0/_corpus.getLang1Tokens().size());
+		return 1.0/_corpus.getLang2Tokens().size();
 	}
 	
 	public double getTau(String s1, String s2) {
@@ -33,6 +47,8 @@ public class ParallelCorpusAnalyzer {
 	}
 	
 	private TupleMap<String,Double> EStep(int iternum,boolean reversed) { //returns partial count map
+		_previousLikelihood = _currentLikelihood;
+		_currentLikelihood = 0;
 		TupleMap<String,Double> n_e_f = new MapOfMaps<String,Double>(0.0);
 		
 //		long prevTime = System.currentTimeMillis();
@@ -53,13 +69,16 @@ public class ParallelCorpusAnalyzer {
 				
 		
 			for(int k = 0;k<frenchSentence.length;k++) { //for each french word position k = 1,..m, do
+				
 				double p_k = 0;
+				
 				
 				for(int j = 0; j <englishSentence.length;j++) { //getting p_k
 //					pairsProcessed++;
 					double tauValue = this.getTau(englishSentence[j],frenchSentence[k]);
 					p_k+=tauValue; // Set pk =Plj=0 τej,fk, where j are the positions of the English words in the same sentence pair as fk
 				}
+				
 				for(int j = 0; j < englishSentence.length;j++) {  //incrementing n_k
 					String french = frenchSentence[k];
 					String english = englishSentence[j];
@@ -85,9 +104,11 @@ public class ParallelCorpusAnalyzer {
 	
 		
 	//TODO - filter taus by a certain threshold?
-	private void filterTaus() {
-		
-	}
+//	protected void filterTaus() {
+//		for(Tuple<String> key: _taus.keySet()) {
+//			
+//		}
+//	}
 	private void MStep(TupleMap<String,Double> n_e_f) {
 		DefaultDict<String,Double> n_e_0 = new DefaultDict<String,Double>(0.0);
 		
@@ -97,24 +118,13 @@ public class ParallelCorpusAnalyzer {
 				n_e_0.put(english, n_e_0.get(english) + this.getTau(english,french));
 
 			}
-//		for(String s1: _corpus.getLang1Tokens()) { //initializing n_e_0
-//			n_e_0.put(s1,0.0);
-//			for(String s2: _corpus.getLang2Tokens()) {
-//				n_e_0.put(s1, n_e_0.get(s1) + this.getTau(s1,s2));
-//			}
-//		}
 		for(Tuple<String> pair: n_e_f.keySet()) {
 			String english = pair.token1;
 			String french = pair.token2;
 			double tauValue = n_e_f.get(english,french)/n_e_0.get(english);
+			_currentLikelihood += Math.log(tauValue);
 			this.setTau(english, french, tauValue);
 		}
-//		for(String s1: _corpus.getLang1Tokens()) {
-//			for(String s2: _corpus.getLang2Tokens()) {
-//				double tauValue = n_e_f.get(new WordPair(s1,s2))/n_e_0.get(s1);
-//				this.setTau(s1, s2, tauValue);
-//			}
-//		}
 	}
 	private void EMIteration(int iternum) {
 		System.out.println("doing EM iteration number" + iternum);
@@ -122,19 +132,22 @@ public class ParallelCorpusAnalyzer {
 		System.out.println("completed e-step");
 		this.MStep(estepValue);
 		System.out.println("completed M step");
-		this.filterTaus();
 		System.gc();
+		
 		
 	}
 
-	private void expectationMaximizer() {
-		for(int i = 0;i<NUM_STEPS;i++) {
-			this.EMIteration(i);
+	protected void expectationMaximizer() {
+		int i = 0;
+		while(i<Constants.NUM_STEPS) {
+			System.out.println("Previous likelihood was " + _previousLikelihood);
+			System.out.println("Likelihood is " + _currentLikelihood);
+			this.EMIteration(i++);
 		}
 	}
 	
 	
-	private void findTranslations() {
+	protected void findTranslations() {
 		DefaultDict<String,Double> _maximumTau = new DefaultDict<String,Double>(0.0);
 		for(Tuple<String> pair: _taus.keySet()) {
 			String english = pair.token1;
@@ -146,6 +159,7 @@ public class ParallelCorpusAnalyzer {
 			}
 		}
 	
+	
 	public void runModel() {
 		this.expectationMaximizer();
 		this.findTranslations();
@@ -156,8 +170,30 @@ public class ParallelCorpusAnalyzer {
 //			System.out.println(e.getKey() + " <-----> " + e.getValue());
 //		}
 	}
+	
 	public String getMostLikelyWord(String s) {
 		return _mostLikelyTranslations.get(s);
+	}
+	public String getBestTranslation(String prevEnglish, String frenchWord) { 
+		String translation = _cachedTranslations.get(prevEnglish, frenchWord);
+		if( translation == null) {
+			double currentBest = 0;
+			for(String englishWord: _taus.getSecondElements(frenchWord)) {
+				double EGivenE = _bigramModel.getTheta(prevEnglish,englishWord);
+				double FGivenE = _taus.get(frenchWord,englishWord);
+				double product = FGivenE*EGivenE;
+				if(product > currentBest) {
+					translation = englishWord;
+					currentBest = product;
+				}
+				
+				
+			}
+		}
+		_cachedTranslations.put(prevEnglish, frenchWord, translation);
+		return translation;
 		
+		// TODO - 1) for the previous english word, loop through every english word, and select the one with maximum bigramProb(previousEnglish, word) * tau(french,english) 
+		// TODO - 2) cache the result, return it
 	}
 }

@@ -11,8 +11,8 @@ import util.TextProcessor;
 
 public class BasicDecoder implements Translator, LineProcessor{
 	private ParallelCorpusAnalyzer _model;
-	private Vector<String[]> _toTranslate;
-	private Vector<String[]> _translatedText;
+	protected Vector<String[]> _toTranslate;
+	protected Vector<String[]> _translatedText;
 	
 	public BasicDecoder(ParallelCorpusAnalyzer model) {
 		_toTranslate = new Vector<String[]>();
@@ -38,21 +38,9 @@ public class BasicDecoder implements Translator, LineProcessor{
 	@Override
 	public void translateFile(String inFile, String outFile) throws IOException {
 		FileProcessor.processByLine(inFile,this);
-		//------ for test
-		Vector<String[]> bothLines = new Vector<String[]>();
-		for(int i = 0;i < _toTranslate.size();i++) {
-			bothLines.add(_toTranslate.get(i));
-			bothLines.add(_translatedText.get(i));
-		}
-		//------ for test
-		FileWriter.writeLines(bothLines, outFile);
+		FileWriter.writeLines(_translatedText, outFile);
 	}
 
-	@Override
-	public double getFScore() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public void processLine(String line) {
