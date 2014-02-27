@@ -16,7 +16,7 @@ public class FileWriter {
 			output.append(DamnitJava.join(" ", line));
 			output.append("\n");
 		}
-		System.out.println(output);
+//		System.out.println(output);
 		outputter.write(output.toString());
 		outputter.close();
 	}

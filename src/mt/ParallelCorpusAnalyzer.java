@@ -31,7 +31,8 @@ public class ParallelCorpusAnalyzer {
 	public void setTau(String s1, String s2, double value) {
 		_taus.put(s1,s2,value);
 	}
-	private TupleMap<String,Double> EStep(int iternum) { //returns partial count map
+	
+	private TupleMap<String,Double> EStep(int iternum,boolean reversed) { //returns partial count map
 		TupleMap<String,Double> n_e_f = new MapOfMaps<String,Double>(0.0);
 		
 //		long prevTime = System.currentTimeMillis();
@@ -39,21 +40,31 @@ public class ParallelCorpusAnalyzer {
 //		System.out.println(_corpus.getLineArrayLang1().size());
 		
 		for(int pos = 0; pos< _corpus.getLineArrayLang1().size();pos++) {
-			String[] sentence1 = _corpus.getLineArrayLang1().elementAt(pos);
-			String[] sentence2 = _corpus.getLineArrayLang2().elementAt(pos);
-			for(int j = 0;j<sentence1.length;j++) { //for each french word position k = 1,..m, do
+			String[] frenchSentence;
+			String[] englishSentence;
+			
+			if(reversed) {
+				frenchSentence = _corpus.getLineArrayLang2().elementAt(pos);
+				englishSentence = _corpus.getLineArrayLang1().elementAt(pos);
+			} else {
+				englishSentence = _corpus.getLineArrayLang1().elementAt(pos); //french
+				frenchSentence = _corpus.getLineArrayLang2().elementAt(pos);
+			}
+				
+		
+			for(int k = 0;k<frenchSentence.length;k++) { //for each french word position k = 1,..m, do
 				double p_k = 0;
 				
-				for(int k = 0; k <sentence2.length;k++) { //getting p_k
+				for(int j = 0; j <englishSentence.length;j++) { //getting p_k
 //					pairsProcessed++;
-					double tauValue = this.getTau(sentence1[j],sentence2[k]);
+					double tauValue = this.getTau(englishSentence[j],frenchSentence[k]);
 					p_k+=tauValue; // Set pk =Plj=0 τej,fk, where j are the positions of the English words in the same sentence pair as fk
 				}
-				for(int k = 0; k < sentence2.length;k++) {  //incrementing n_k
-					String word1 = sentence1[j];
-					String word2 = sentence2[k];
-					double tauValue = _taus.get(word1,word2);
-					n_e_f.put(word1,word2,n_e_f.get(word1,word2)+tauValue/p_k);
+				for(int j = 0; j < englishSentence.length;j++) {  //incrementing n_k
+					String french = frenchSentence[k];
+					String english = englishSentence[j];
+					double tauValue = _taus.get(english,french);
+					n_e_f.put(english,french,n_e_f.get(english,french)+tauValue/p_k);
 				}
 			}
 //			if(pos %100 == 0) {
@@ -71,6 +82,8 @@ public class ParallelCorpusAnalyzer {
 		}
 		return n_e_f;
 	}
+	
+		
 	//TODO - filter taus by a certain threshold?
 	private void filterTaus() {
 		
@@ -79,9 +92,9 @@ public class ParallelCorpusAnalyzer {
 		DefaultDict<String,Double> n_e_0 = new DefaultDict<String,Double>(0.0);
 		
 		for(Tuple<String> pair: n_e_f.keySet()) {
-				String word1 = pair.token1;
-				String word2 = pair.token2;
-				n_e_0.put(word1, n_e_0.get(word1) + this.getTau(word1,word2));
+				String english = pair.token1;
+				String french = pair.token2;
+				n_e_0.put(english, n_e_0.get(english) + this.getTau(english,french));
 
 			}
 //		for(String s1: _corpus.getLang1Tokens()) { //initializing n_e_0
@@ -91,10 +104,10 @@ public class ParallelCorpusAnalyzer {
 //			}
 //		}
 		for(Tuple<String> pair: n_e_f.keySet()) {
-			String word1 = pair.token1;
-			String word2 = pair.token2;
-			double tauValue = n_e_f.get(word1,word2)/n_e_0.get(word1);
-			this.setTau(word1, word2, tauValue);
+			String english = pair.token1;
+			String french = pair.token2;
+			double tauValue = n_e_f.get(english,french)/n_e_0.get(english);
+			this.setTau(english, french, tauValue);
 		}
 //		for(String s1: _corpus.getLang1Tokens()) {
 //			for(String s2: _corpus.getLang2Tokens()) {
@@ -105,7 +118,7 @@ public class ParallelCorpusAnalyzer {
 	}
 	private void EMIteration(int iternum) {
 		System.out.println("doing EM iteration number" + iternum);
-		TupleMap<String,Double> estepValue = this.EStep(iternum);
+		TupleMap<String,Double> estepValue = this.EStep(iternum,false);
 		System.out.println("completed e-step");
 		this.MStep(estepValue);
 		System.out.println("completed M step");
@@ -124,11 +137,11 @@ public class ParallelCorpusAnalyzer {
 	private void findTranslations() {
 		DefaultDict<String,Double> _maximumTau = new DefaultDict<String,Double>(0.0);
 		for(Tuple<String> pair: _taus.keySet()) {
-			String word1 = pair.token1;
-			String word2 = pair.token2;
-				if(_maximumTau.get(word2) < _taus.get(word1,word2)) {
-					_maximumTau.put(word2, _taus.get(word1,word2));
-					_mostLikelyTranslations.put(word2,word1);
+			String english = pair.token1;
+			String french = pair.token2;
+				if(_maximumTau.get(english) < _taus.get(english,french)) {
+					_maximumTau.put(english, _taus.get(english,french));
+					_mostLikelyTranslations.put(english,french);
 				}
 			}
 		}

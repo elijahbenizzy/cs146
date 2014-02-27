@@ -18,7 +18,7 @@ public class ParallelCorpus {
 	private Vector<String[]> _lineArray2;
 	private Set<String> _lang1Tokens;
 	private Set<String> _lang2Tokens;// translating from lang2 to lang1
-	public ParallelCorpus(String lang1, String filePath1, String lang2, String filePath2) throws IOException, InvalidCorpusException {
+	public ParallelCorpus(String lang2, String filePath2, String lang1, String filePath1) throws IOException, InvalidCorpusException {
 		_lang1 = lang1;
 		_lang2 = lang2;
 		WordCounter lang1Counter = new WordCounter();
