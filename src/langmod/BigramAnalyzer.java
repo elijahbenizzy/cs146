@@ -19,7 +19,9 @@ public class BigramAnalyzer extends Analyzer {
 	
 	public BigramAnalyzer(String trainingFile,double alpha, double beta) throws IOException {
 		super(trainingFile,null);
-		_unigramModel = new UnigramAnalyzer(trainingFile,alpha);	
+		_beta = beta;
+		_unigramModel = new UnigramAnalyzer(trainingFile,alpha);
+		_unigramModel.setAlpha(alpha);
 		_trainingData = new BigramCorpus(trainingFile);
 	}
 	public BigramAnalyzer(UnigramAnalyzer unigramModel) throws IOException {
@@ -55,6 +57,13 @@ public class BigramAnalyzer extends Analyzer {
 		int n_w_wprime = c.getBigramFrequency(b);
 		int n_w_o = c.firstTokenFrequency(b.token1);
 		double theta_wprime = _unigramModel.getTheta(b.token2, _unigramModel.getAlpha(), c);
+		double output = (n_w_wprime + beta*theta_wprime)/(n_w_o + beta);
+		if (output == 0) {
+			System.out.println("n_w_wprime : " + n_w_wprime);
+			System.out.println("beta : " + beta);
+			System.out.println("theta_wprime : " + theta_wprime);
+			System.out.println("n_w_o :" + n_w_o);
+		}
 		return (n_w_wprime + beta*theta_wprime)/(n_w_o + beta);
 	}
 	
