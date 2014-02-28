@@ -33,11 +33,12 @@ public class ParallelCorpus {
 		if(_lineArray1.size() != _lineArray2.size()) {
 			throw new InvalidCorpusException();
 		}
-		(_lang1Tokens = new HashSet<String>(lang1Counter.getAllTokens())).add(Constants.NO_TRANSLATION);
+//		(_lang1Tokens = new HashSet<String>(lang1Counter.getAllTokens())).add(Constants.NO_TRANSLATION);
+		_lang1Tokens = new HashSet<String>(lang1Counter.getAllTokens());
 		_lang2Tokens = new HashSet<String>(lang2Counter.getAllTokens());
 	}
 	
-	public String getLang1data() {
+	public String getLang1Data() {
 		return _lang1Data;
 	}
 	public String getLang2Data() {

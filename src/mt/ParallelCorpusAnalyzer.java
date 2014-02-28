@@ -28,17 +28,15 @@ public class ParallelCorpusAnalyzer {
 		_taus = new MapOfMaps<String,Double>(_initialTauValue);
 		_mostLikelyTranslations = new HashMap<String,String>();
 	}
-	
-	private boolean converged() {
-		return (_previousLikelihood != 0) && Math.abs(_currentLikelihood-_previousLikelihood) < Math.log(Constants.CONVERGANCE_THRESHOLD);
-	}
+
 	
 	private double getInitialTauValue() {
-		System.out.println(1.0/_corpus.getLang1Tokens().size());
-		return 1.0/_corpus.getLang2Tokens().size();
+//		System.out.println(1.0/_corpus.getLang1Tokens().size());
+		return 1.0;
 	}
 	
 	public double getTau(String s1, String s2) {
+		
 		return _taus.get(s1,s2);
 	}
 	
@@ -129,7 +127,7 @@ public class ParallelCorpusAnalyzer {
 	private void EMIteration(int iternum) {
 		System.out.println("doing EM iteration number" + iternum);
 		TupleMap<String,Double> estepValue = this.EStep(iternum,false);
-		System.out.println("completed e-step");
+		System.out.println("completed E-step");
 		this.MStep(estepValue);
 		System.out.println("completed M step");
 		System.gc();

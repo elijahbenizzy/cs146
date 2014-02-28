@@ -51,9 +51,6 @@ public class MapOfMaps<K,V> implements TupleMap<K,V>{
 		}
 
 		public V put(K elem1, K elem2, V value) {
-			if(!this.containsKey(elem1,elem2)) {
-				_size++;
-			}
 			if(!_map.containsKey(elem1)) {
 				_map.put(elem1, new HashMap<K,V>());
 				
@@ -104,4 +101,18 @@ public class MapOfMaps<K,V> implements TupleMap<K,V>{
 			
 		}
 		
+		@Override
+		public V remove(K key1, K key2) {
+			if(!_map.containsKey(key1)) {
+				return null;
+			} else {
+				return _map.get(key1).remove(key2);
+			}
+		}
+
+
+		@Override
+		public void setDefault(V d) {
+			_defaultValue = d;		
+		}
 	}

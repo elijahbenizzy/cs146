@@ -9,4 +9,6 @@ public interface TupleMap<K,V> {
 	public Set<Tuple<K>> keySet();
 	public Iterable<K> getSecondElements(K elem1);
 	public void reverse(); //reverses the order of every tuple
+	public V remove(K key1, K key2);
+	void setDefault(V d);
 }

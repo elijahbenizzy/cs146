@@ -14,7 +14,7 @@ public class Main {
 		String trainingFrench = "/Users/elijah/Documents/Spring2014/cs146/mt/data/french-senate-0.txt";
 		String toTranslate = "/Users/elijah/Documents/Spring2014/cs146/mt/data/french-senate-2.txt";
 		String outfile = "/Users/elijah/Documents/Spring2014/cs146/mt/out.txt";
-		ParallelCorpus corpus = new ParallelCorpus("english","/Users/elijah/Documents/Spring2014/cs146/mt/data/english-senate-0.txt","french","/Users/elijah/Documents/Spring2014/cs146/mt/data/french-senate-0.txt");
+		ParallelCorpus corpus = new ParallelCorpus("english",trainingEnglish,"french",trainingFrench);
 		ParallelCorpusAnalyzer analyzer = new ParallelCorpusAnalyzer(corpus);
 		analyzer.runModel();
 		BasicDecoder basicDecoder = new BasicDecoder(analyzer);
@@ -26,7 +26,7 @@ public class Main {
 		String trainingFrench = "/Users/elijah/Documents/Spring2014/cs146/mt/data/french-senate-0.txt";
 		String toTranslate = "/Users/elijah/Documents/Spring2014/cs146/mt/data/french-senate-2.txt";
 		String outfile = "/Users/elijah/Documents/Spring2014/cs146/mt/outNoisyChannel.txt";
-		ParallelCorpus corpus = new ParallelCorpus("french",trainingFrench,"english",trainingEnglish);
+		ParallelCorpus corpus = new ParallelCorpus("english",trainingFrench,"french",trainingEnglish);
 		NoisyChannelAnalyzer analyzer = new NoisyChannelAnalyzer(corpus);
 		analyzer.runModel();
 		NoisyChannelDecoder decoder = new NoisyChannelDecoder(analyzer);
