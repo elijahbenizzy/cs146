@@ -46,7 +46,6 @@ public class ParallelCorpusAnalyzer {
 		_previousLikelihood = _currentLikelihood;
 		_currentLikelihood = 0;
 		TupleMap<String,Double> n_e_f = new MapOfMaps<String,Double>(0.0);
-		System.out.println("Iteration number" + iternum + "...");
 		for(int pos = 0; pos< _corpus.getLineArrayLang1().size();pos++) {
 			String[] frenchSentence;
 			String[] englishSentence;

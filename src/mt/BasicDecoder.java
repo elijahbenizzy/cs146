@@ -42,6 +42,7 @@ public class BasicDecoder implements Translator, LineProcessor{
 	
 	public void printTranslation(String inFile) throws IOException {
 		FileProcessor.processByLine(inFile, this);
+		FileWriter.writeLines(_translatedText);
 	}
 
 
