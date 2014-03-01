@@ -29,7 +29,7 @@ public class Main {
 		analyzer.runModel();
 		BasicDecoder basicDecoder = new BasicDecoder(analyzer);
 		basicDecoder.printTranslation(toTranslate);
-		System.out.println("F-Score is :"  + Evaluator.getFScore("/Users/elijah/Documents/Spring2014/cs146/mt/data/english-senate-2.txt","/Users/elijah/Documents/Spring2014/cs146/mt/out.txt"));
+
 	}
 	public static void runNoisyChannelDecoder(String trainingEnglish, String trainingFrench,String toTranslate) throws IOException, InvalidCorpusException {
 		ParallelCorpus corpus = new ParallelCorpus("english",trainingFrench,"french",trainingEnglish);
