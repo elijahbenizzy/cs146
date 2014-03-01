@@ -1,0 +1,22 @@
+README
+
+1) Design
+	I coded the assignment in java. I used 4 packages - langmod (from the previous project) mt, util, and counts (from counts).
+	In mt, the important classes are:
+		Main - to run it
+		Evaluator - to calulate the f-score
+		ParallelCorpus - to store two parallel texts 
+		ParallelCorpusAnalyzer - to analyze them
+		Noisy ChannelAnalyzer - to analyzer them and provide translations using a noisy channel decoder
+		NoisyChannelDecoder and BasicDecoder - outputs the translations
+		TupleMap - stores a hashset of the form Hashset<Tuple<K>,V>
+		and a few more...
+2) Bugs - no known bugs
+
+3) Questions:
+	The very dumb decoder looks a little better to me, although sometimes the noisy channel decoder does a better job.
+	The very dumb decoder tends to have a higher F-Score. This makes sense because the f-score does nt care about the quality of the sentence outputted, just that it contains the correct translations. This is problematic because the sentence could have
+	the correct translations, but be completely incoherent. It shows that our method of evalutation is likely to judge translations based on word content, not order.
+
+Cheers,
+Elijah
