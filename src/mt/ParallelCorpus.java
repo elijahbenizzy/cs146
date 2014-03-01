@@ -17,7 +17,7 @@ public class ParallelCorpus {
 	private Vector<String[]> _lineArray1;
 	private Vector<String[]> _lineArray2;
 	private Set<String> _lang1Tokens;
-	private Set<String> _lang2Tokens;// translating from lang2 to lang1
+	private Set<String> _lang2Tokens;
 	private String _lang1Data;
 	private String _lang2Data;
 	public ParallelCorpus(String lang2, String filePath2, String lang1, String filePath1) throws IOException, InvalidCorpusException {
@@ -33,7 +33,6 @@ public class ParallelCorpus {
 		if(_lineArray1.size() != _lineArray2.size()) {
 			throw new InvalidCorpusException();
 		}
-//		(_lang1Tokens = new HashSet<String>(lang1Counter.getAllTokens())).add(Constants.NO_TRANSLATION);
 		_lang1Tokens = new HashSet<String>(lang1Counter.getAllTokens());
 		_lang2Tokens = new HashSet<String>(lang2Counter.getAllTokens());
 	}

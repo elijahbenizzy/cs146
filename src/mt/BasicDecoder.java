@@ -22,7 +22,6 @@ public class BasicDecoder implements Translator, LineProcessor{
 
 	@Override
 	public String[] translate(String[] sentence) {
-		// TODO Auto-generated method stub
 		ArrayList<String> out = new ArrayList<String>();
 		for(String toTranslate: sentence) {
 			String translation = _model.getMostLikelyWord(toTranslate);
@@ -40,11 +39,15 @@ public class BasicDecoder implements Translator, LineProcessor{
 		FileProcessor.processByLine(inFile,this);
 		FileWriter.writeLines(_translatedText, outFile);
 	}
+	
+	public void printTranslation(String inFile) throws IOException {
+		FileProcessor.processByLine(inFile, this);
+	}
 
 
 	@Override
 	public void processLine(String line) {
-		String[] lineSplit = line.split(" ");
+		String[] lineSplit = line.split("\\s+");
 		_toTranslate.add(lineSplit);
 		_translatedText.add(this.translate(lineSplit));
 	}

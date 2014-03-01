@@ -2,7 +2,7 @@ package util;
 
 import langmod.MaximizeableFunction;
 
-public class MathUtil {
+public class Util {
 	public static double ternarySearch(MaximizeableFunction function, double start, double end, double precision) {
 		if (end-start < precision) 
 			return (start+end)/2;
@@ -18,5 +18,17 @@ public class MathUtil {
 			return ternarySearch(function,start,right,precision);
 				
 		
+	}
+	public static String join(String link, String[] stringArray) {
+		if(stringArray.length == 0) {
+			return "";
+		}
+		
+		StringBuilder s = new StringBuilder();
+		for(int i = 0; i< stringArray.length -1; i++) {
+			s.append(stringArray[i] + link);
+		}
+		s.append(stringArray[stringArray.length-1]);
+		return s.toString();
 	}
 }

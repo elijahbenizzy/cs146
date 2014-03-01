@@ -23,6 +23,7 @@ public class Tuple<T> {
 		}
 		@Override
 		public boolean equals(Object o) {
+			@SuppressWarnings("unchecked")
 			Tuple<T> toCompare = (Tuple<T>) o;
 			return (this.token1.equals(toCompare.token1)) && (this.token2.equals(toCompare.token2));
 		}

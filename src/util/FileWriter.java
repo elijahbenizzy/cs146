@@ -13,11 +13,18 @@ public class FileWriter {
 		Writer outputter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile)));
 		StringBuilder output = new StringBuilder();
 		for(String[] line: lines) {
-			output.append(DamnitJava.join(" ", line));
+			output.append(Util.join(" ", line));
 			output.append("\n");
 		}
-//		System.out.println(output);
 		outputter.write(output.toString());
 		outputter.close();
+	}
+	public static void writeLines(Vector<String[]> lines) {
+		StringBuilder output = new StringBuilder();
+		for(String[] line: lines) {
+			output.append(Util.join(" ", line));
+			output.append("\n");
+		}
+		System.out.print(output);
 	}
 }

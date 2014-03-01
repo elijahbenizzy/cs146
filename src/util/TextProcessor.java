@@ -10,7 +10,7 @@ public class TextProcessor implements LineProcessor {
 
 	@Override
 	public void processLine(String line) {
-		_text.add(line.split(" "));
+		_text.add(line.split("\\s+"));
 		
 	}
 	public Vector<String[]> getText() {

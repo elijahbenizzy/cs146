@@ -74,7 +74,7 @@ public class UnigramAnalyzer extends Analyzer {
 	}
 	
 	private double bestAlpha() {
-		return util.MathUtil.ternarySearch(new MaximumLikelihoodFunction(), Math.pow(10,-6), Math.pow(10,6), Math.pow(10, -9));
+		return util.Util.ternarySearch(new MaximumLikelihoodFunction(), Math.pow(10,-6), Math.pow(10,6), Math.pow(10, -9));
 	}
 	
 	@Override

@@ -13,7 +13,6 @@ public class ParallelCorpusAnalyzer {
 	private ParallelCorpus _corpus;
 	protected TupleMap<String,Double> _taus;
 	private double _initialTauValue;
-	public static final int NUM_STEPS = 13;
 	private double _previousLikelihood;
 	private double _currentLikelihood;
 	private TupleMap<String,String> _cachedTranslations; //stores the cached translations given a preveious englishword and a french word
@@ -31,7 +30,6 @@ public class ParallelCorpusAnalyzer {
 
 	
 	private double getInitialTauValue() {
-//		System.out.println(1.0/_corpus.getLang1Tokens().size());
 		return 1.0;
 	}
 	
@@ -48,11 +46,7 @@ public class ParallelCorpusAnalyzer {
 		_previousLikelihood = _currentLikelihood;
 		_currentLikelihood = 0;
 		TupleMap<String,Double> n_e_f = new MapOfMaps<String,Double>(0.0);
-		
-//		long prevTime = System.currentTimeMillis();
-//		int pairsProcessed = 0;
-//		System.out.println(_corpus.getLineArrayLang1().size());
-		
+		System.out.println("Iteration number" + iternum + "...");
 		for(int pos = 0; pos< _corpus.getLineArrayLang1().size();pos++) {
 			String[] frenchSentence;
 			String[] englishSentence;
@@ -84,29 +78,10 @@ public class ParallelCorpusAnalyzer {
 					n_e_f.put(english,french,n_e_f.get(english,french)+tauValue/p_k);
 				}
 			}
-//			if(pos %100 == 0) {
-//				long t2 = System.currentTimeMillis();
-//				double timeTaken = (t2-prevTime);
-//				System.out.println("================");
-//				System.out.println("position #" + pos + " took " + timeTaken + " milliseconds to process " + pairsProcessed + "pairs");
-//				System.out.println("total used memory is:" + (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000 + "m");
-//				System.out.println("total possible size is:" + _corpus.getLang1Tokens().size()*_corpus.getLang2Tokens().size());
-//				System.out.println("Iteration number is: " + iternum);
-//				System.out.println("================");
-//				pairsProcessed = 0;
-//				prevTime = t2;
-//			}
+
 		}
 		return n_e_f;
 	}
-	
-		
-	//TODO - filter taus by a certain threshold?
-//	protected void filterTaus() {
-//		for(Tuple<String> key: _taus.keySet()) {
-//			
-//		}
-//	}
 	private void MStep(TupleMap<String,Double> n_e_f) {
 		DefaultDict<String,Double> n_e_0 = new DefaultDict<String,Double>(0.0);
 		
@@ -125,11 +100,7 @@ public class ParallelCorpusAnalyzer {
 		}
 	}
 	private void EMIteration(int iternum) {
-		System.out.println("doing EM iteration number" + iternum);
-		TupleMap<String,Double> estepValue = this.EStep(iternum,false);
-		System.out.println("completed E-step");
-		this.MStep(estepValue);
-		System.out.println("completed M step");
+		this.MStep(this.EStep(iternum,false));
 		System.gc();
 		
 		
@@ -138,8 +109,6 @@ public class ParallelCorpusAnalyzer {
 	protected void expectationMaximizer() {
 		int i = 0;
 		while(i<Constants.NUM_STEPS) {
-			System.out.println("Previous likelihood was " + _previousLikelihood);
-			System.out.println("Likelihood is " + _currentLikelihood);
 			this.EMIteration(i++);
 		}
 	}
@@ -161,12 +130,6 @@ public class ParallelCorpusAnalyzer {
 	public void runModel() {
 		this.expectationMaximizer();
 		this.findTranslations();
-//		for(WordPair w: _taus.keySet()) {
-//			System.out.println(w + " <-----> " + _taus.get(w.token1,w.token2));
-//		}
-//		for(Entry<String,String> e: _mostLikelyTranslations.entrySet()) {
-//			System.out.println(e.getKey() + " <-----> " + e.getValue());
-//		}
 	}
 	
 	public String getMostLikelyWord(String s) {
@@ -190,8 +153,5 @@ public class ParallelCorpusAnalyzer {
 		}
 		_cachedTranslations.put(prevEnglish, frenchWord, translation);
 		return translation;
-		
-		// TODO - 1) for the previous english word, loop through every english word, and select the one with maximum bigramProb(previousEnglish, word) * tau(french,english) 
-		// TODO - 2) cache the result, return it
 	}
 }

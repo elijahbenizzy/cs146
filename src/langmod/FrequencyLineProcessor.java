@@ -11,6 +11,6 @@ public class FrequencyLineProcessor implements LineProcessor{
 	}
 	@Override
 	public void processLine(String line) {
-		_currentLine = line.split(" ");
+		_currentLine = line.split("\\s+");
 	}
 }

@@ -72,7 +72,7 @@ public class BigramAnalyzer extends Analyzer {
 		
 	}
 	public double bestBeta() {
-		return util.MathUtil.ternarySearch(new MaximumLikelihoodFunction(), Math.pow(10,-6), Math.pow(10,6), Math.pow(10, -9));
+		return util.Util.ternarySearch(new MaximumLikelihoodFunction(), Math.pow(10,-6), Math.pow(10,6), Math.pow(10, -9));
 	}
 	
 	public double getLogProbability(Vector<String[]> text) {
