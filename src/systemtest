@@ -1,0 +1,5 @@
+./noisychannel /course/cs146/data/french-senate-0.txt /course/cs146/data/english-senate-0.txt /course/cs146/data/french-senate-2.txt > outverydumb.txt
+./verydumb /course/cs146/data/french-senate-0.txt /course/cs146/data/english-senate-0.txt /course/cs146/data/french-senate-2.txt > outnoisychannel.txt
+./fscore outnoisychannel.txt /course/cs146/data/english-senate-2.txt
+./fscore outverydumb.txt /course/cs146/data/english-senate-2.txt
+
