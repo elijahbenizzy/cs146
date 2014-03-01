@@ -68,7 +68,7 @@ public class ParallelCorpusAnalyzer {
 				for(int j = 0; j <englishSentence.length;j++) { //getting p_k
 //					pairsProcessed++;
 					double tauValue = this.getTau(englishSentence[j],frenchSentence[k]);
-					p_k+=tauValue; // Set pk =Plj=0 τej,fk, where j are the positions of the English words in the same sentence pair as fk
+					p_k+=tauValue; 
 				}
 				
 				for(int j = 0; j < englishSentence.length;j++) {  //incrementing n_k
